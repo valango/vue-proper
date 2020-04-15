@@ -1,0 +1,34 @@
+{
+  "name": "vue-proper",
+  "version": "1.0.0",
+  "description": "Seting Vue.js component props default values from central dictionary.",
+  "main": "index.js",
+  "keywords": [
+    "vue.js",
+    "component",
+    "props",
+    "defaults"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "lodash": "^4.17.15",
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "lodash.clone": "^4.5.0",
+    "lodash.foreach": "^4.5.0",
+    "lodash.pick": "^4.4.0"
+  },
+  "scripts": {
+    "purge": "rimraf node_modules reports",
+    "lint": "eslint --ext .js .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
