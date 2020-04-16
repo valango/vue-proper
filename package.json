@@ -1,7 +1,7 @@
 {
   "name": "vue-proper",
-  "version": "1.0.0",
-  "description": "Seting Vue.js component props default values from central dictionary.",
+  "version": "0.8.0",
+  "description": "Maintain Vue.js component static props thru central repository.",
   "main": "index.js",
   "keywords": [
     "vue.js",
