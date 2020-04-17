@@ -2,6 +2,14 @@
 const _clone = require('lodash.clone')
 const _forEach = require('lodash.foreach')
 const _pick = require('lodash.pick')
+const defaults = require('lodash.defaults')
+const camelCase = require('lodash.camelcase')
+const upperFirst = require('lodash.upperfirst')
+
+const cap = (vm) => {
+  const s = (vm.$options && vm.$options._componentTag) || ''
+  return upperFirst(camelCase(s))
+}
 
 /**
  *
@@ -66,31 +74,39 @@ exports = module.exports = (dictionary, namespace = undefined) => {
 exports.dictionary = {}
 
 exports.retrieve = (path) => {
-  console.log('retrieve', path)
   if (path === undefined) return {}
+  console.log('RETRIEVE', path)
   return exports.dictionary
 }
 
+const componentName = (vm) =>
+  cap((vm.$options && vm.$options._componentTag) || '')
+
 exports.namespaced = (namespace) => {
-  const ns = namespace || 'proper'
-  const postMethod = ns + 'Add', tagFn = ns + 'Tag'
+  const properFn = namespace || 'proper'
+  const dynamicFn = properFn + 'Add', keyFn = properFn + 'Key'
 
   // https://vuejs.org/v2/guide/mixins.html
   return {
     created () {
-      if (typeof this[tagFn] !== 'function') return //  Not using API.
+      if (typeof this[properFn] !== 'function') return  //  Not using API.
 
-      if (!this.hasOwnProperty(ns)) {
-        this[ns] = function (field = undefined) {
-          const r = field
-            ? exports.retrieve(this[tagFn](field))
-            : this.$attrs
-          return this[postMethod](r, field)
+      const name = cap(this), prefix = name ? name + '.' : ''
+
+      if (this[properFn]('') === undefined) {           //  It is a stub.
+        this[properFn] = function (field = '') {
+          const r = exports.retrieve(this[keyFn](field))
+          field ? defaults(r, this.$attrs) : Object.assign(r, this.$attrs)
+          return this[dynamicFn](r, field)
         }
       }
 
-      if (!this.hasOwnProperty(postMethod)) {
-        this[postMethod] = (r) => r
+      if (!this.hasOwnProperty(keyFn)) {
+        this[keyFn] = (r = '') => prefix + r
+      }
+
+      if (!this.hasOwnProperty(dynamicFn)) {
+        this[dynamicFn] = (r) => r
       }
     }
   }

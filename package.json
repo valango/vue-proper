@@ -22,9 +22,12 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
+    "lodash.camelcase": "^4.3.0",
     "lodash.clone": "^4.5.0",
+    "lodash.defaults": "^4.2.0",
     "lodash.foreach": "^4.5.0",
-    "lodash.pick": "^4.4.0"
+    "lodash.pick": "^4.4.0",
+    "lodash.upperfirst": "^4.3.1"
   },
   "scripts": {
     "purge": "rimraf node_modules reports",
