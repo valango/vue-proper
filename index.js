@@ -1,15 +1,12 @@
 'use strict'
-const _clone = require('lodash.clone')
+const clone = require('lodash.clone')
 const _forEach = require('lodash.foreach')
 const _pick = require('lodash.pick')
 const defaults = require('lodash.defaults')
 const camelCase = require('lodash.camelcase')
 const upperFirst = require('lodash.upperfirst')
 
-const cap = (vm) => {
-  const s = (vm.$options && vm.$options._componentTag) || ''
-  return upperFirst(camelCase(s))
-}
+const cap = (s) => upperFirst(camelCase(s))
 
 /**
  *
@@ -75,8 +72,7 @@ exports.dictionary = {}
 
 exports.retrieve = (path) => {
   if (path === undefined) return {}
-  console.log('RETRIEVE', path)
-  return exports.dictionary
+  return clone(exports.dictionary)
 }
 
 const componentName = (vm) =>
@@ -91,12 +87,14 @@ exports.namespaced = (namespace) => {
     created () {
       if (typeof this[properFn] !== 'function') return  //  Not using API.
 
-      const name = cap(this), prefix = name ? name + '.' : ''
+      const name = componentName(this), prefix = name ? name + '.' : ''
 
       if (this[properFn]('') === undefined) {           //  It is a stub.
         this[properFn] = function (field = '') {
-          const r = exports.retrieve(this[keyFn](field))
+          const k = this[keyFn](field)
+          const r = exports.retrieve(k)
           field ? defaults(r, this.$attrs) : Object.assign(r, this.$attrs)
+          // if (field === 'projectile') console.debug('RETRIEVE %s', k, r)
           return this[dynamicFn](r, field)
         }
       }

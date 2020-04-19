@@ -2,82 +2,62 @@
 
 Maintain Vue.js component static props thru central repository.
 
-**Warning:** This package is not published yet and dramatic changes may happen to it.
+## Problem
+[Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
+provide super powerful APIs to control component appearance and behavior.
+Even [QInput](https://quasar.dev/vue-components/input)
+control element has 15 style-related properties out of 47 total!
 
-Vue.js and related Quasar framework provide super powerful API to control
-component appearance and behavior. But it often results in unpleasantly bloated
-template code like this:
+Would you like to keep boilerplate property definitions separate from your
+functional code - similarly as HTML styling is kept in CSS, SASS, SCSS, etc...?
+
+_**vue-proper**_ makes it easy to do this and more.
+
+## Usage
+
+Somewhere in application boot code:
+```javascript
+import Vue from 'vue'
+import defaults from '../ui-definitions'
+
+Vue.mixin(require('vue-proper')(defaults))
+```
+Now, in `some-component.vue`:
 ```html
 <template>
-  <q-select dense :disable="disable" :error="error" fill-input
-            hide-bottom-space
-            :hide-dropdown-icon="hideDropdownIcon" hide-selected
-            input-debounce="100" options-dense outlined
-            no-error-icon :placeholder="placeholder" ref="me" use-input
-            v-model="current" :options="list" @filter="filterFn"
-            @focusin.native="focusIn" @focusout.native="focusOut">
-    <template v-slot:no-option>
-      <q-item v-if="noResults">
-        <q-item-section class="text-grey">No results</q-item-section>
-      </q-item>
-    </template>
-  </q-select>
-</template>
-```
-And this is just a simple text input field... come on! Instead, I would like:
-```html
-        <q-input @focus="at(2)" :disable="isWeightless" :error="errs[2]"
-                 label="mass" ref="mass" v-model="mass"></q-input>
-```
-and
-```javascript
-const props = require('vue-proper')('.MyComponent')
-
-export default {
-  props: require('vue-proper')('.MyComponent.inThisCase', {
-      options: {type: Array, required: true}
-    }),
-  //  Rest of component definition.
-}
-```
-This code is more readable and maintainable! Also, keeping static property
-definitions separately would be essentially the same thing as using CSS instead
-of HTML `style="myriade: of-horrible-definitions"`.
-
-The central repository would be a static dictionary something like this:
-```javascript
-    {
-       $MySlowDataComponent: {
-          $WithDetailedDiagnostics: {
-                   hideBottomSpace: false,
-                   noErrorIcon: false
-          },
-          inputDebounce: '1000'   //  Give user time to enjoy the animations.
-       },
-       // Generic defaults for any context.
-       dense: true,
-       hideBottomSpace: true,
-       inputDebounce: '100',
-       noErrorIcon: true
-       outlined: true
-    }
-```
-
-This is a simple component:
-```html
-<template>
-  <q-select @filter="filterFn" @focusin.native="focusIn" v-bind="$proper('select1')">
-  </q-select>
+      <some-element v-bind="proper('name')" v-model="name">
+      </some-element>
 </template>
 ```
 ```javascript
 export default {
-  $properTag: 'MyComponent',
+  methods: {
+    //  API of vue-proper package.
+    proper: () => undefined    
+  }
 }
 ```
-Unless `$proper()` method is already defined in `methods` section,
-it will be created and bound to _component instance_ during initiation.
-The `$properTag` will be bound to it.
+Are we missing something here? Oh, yes - the `ui-definitions.js` file:
+```javascript
+export default {
+     // Common defaults
+     outlined: true,    //  Used by Quasar
+     useInput: true,    //  Will map to `use-input` property, if element has such.
+     // Some parts of UI use different styling.
+     ['/smooth/']: {
+       outlined: false, //  Quasar stuff - only one of `filled`, `outlined`,
+       rounded: true    //  `standout` and `borderless` can be true.
+     },
+     ['/\@failed$/']: {   //  Some state-related styling here.
+       color: 'red'
+     }
+}
+```
+Now, all elements in html template will have `outlined` and `use-input` properties
+set to _true_ if applicable, except in component `MySmoothInput.vue` where 
+`rounded` and `use-input` will be _true_ instead.
+
+## How it works
 
 See [Vue.js custom directives](https://vuejs.org/v2/guide/custom-directive.html)
 
