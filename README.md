@@ -22,21 +22,21 @@ import defaults from '../ui-definitions'
 
 Vue.mixin(require('vue-proper')(defaults))
 ```
-Now, in `some-component.vue`:
+Now, in `SomeComponent.vue`:
 ```html
 <template>
-      <some-element v-bind="proper('name')" v-model="name" />
+      <some-element v-bind="proper('surname')" v-model="surname" />
 </template>
 ```
 ```javascript
 export default {
   methods: {
-    //  API of vue-proper package.
+    //  Injection point for vue-proper API.
     proper: () => undefined    
   }
 }
 ```
-Are we missing something here? Oh, yes - the `ui-definitions.js` file:
+The `ui-definitions.js` file:
 ```javascript
 export default {
      // Common defaults
@@ -57,32 +57,97 @@ set to _true_ if applicable, except in component `MySmoothInput.vue` where
 `rounded` and `use-input` will be _true_ instead.
 
 ## How it works
+Every time an UI element is (re-)rendered, it's `v-bind=` method gets called.
+This happens quite frequently - on content changes, focus changes, etc...
 
-See [Vue.js custom directives](https://vuejs.org/v2/guide/custom-directive.html)
+On component creation, the do-nothing `proper()` method will be replaced with
+a real thing. Then, on every invocation `this.proper('surname')`
+the following sequence will take place:
+   1. `this.properKey('surname')` is called, which by default results in
+    string `SomeComponent.name`, used as **_retrieval key_** on `ui-definitions` 
+    contents (see [Retrieval algorithm](#retrieval-algorithm)).
+   1. With settings object retrieved, the `ref` property is set to `'surname'` 
+   and if `name` property is still not set, it will be `'surname'`, too.
+   1. `this.properAdd(settings)` is called, which just returns it's argument
+   unchanged by default.
+   1. Settings objects is returned by `proper()` method and will be applied
+   to UI element.
 
-#Lifecycle
+### Retrieval algorithm
+   1. all properties with normal string keys are assigned to result object.
+   1. if property key is RegExpr definition and the _retrieval key_ matches,
+   it's contents will be recursively processed from step #1 on and the result
+   be assigned to upper-level result object, overriding conflicting property values.
+
+## API
+### Component instance methods
+**`proper`**`( elementName : string= ) : Object  `
+If this instance method is not defined, then our component will not be
+supported by services described above and nothing will be injected to it's code.
+
+If the method returns undefined, then it will be replaced with default method
+during element creation. Otherwise, it will be left as it is.
+
+**HINT:** If you want to wrap the native method in your own,
+use `v-bind="myMethod(...)"` in component template.
+
+**`properKey`**`( elementName : string=, componentName : string= ) : String  `
+Should generate proper retrieval key. You can use Vue router path, state variables
+or whatever you like. Default code injected will just concatenate component
+and element names using '.' as separator.
+
+**`properFinal`**`( settings : Object ) : Object  `
+Finalizes the settings object. Default version does nothing. It is possible
+to set dynamic properties here instead of using things like `:error-message="eMsg"`
+in component's html template.
+
+### Package exports
+**`mixin`**`(settings : Object=, namespace : string=) : Object  `
+Factory returning mixin definition object. If settings are not provided at
+the first call, then exception will be thrown.
+Namespace defaults to 'proper' and
+it affects the names of instance methods. Once the settings objects is provided,
+it will be used in following calls.
+This method is also default export.
+
+**`set`**`(settings : Object) : Object  `
+Assign new settings and return the previous object. Effects already initiated
+components, too. This method is called internally on the first call to `mixin()`.
+
+**`retrieve`**`(key : string=) : Object  `
+Retrieve the settings. Results are cached internally. Calling this method without
+arguments clears the cache.
+This method is called internally by `proper()` instance method.
+
+## Advanced topics
+Just for clarity: whatever properties are returned by `proper()`, only those
+recognized by particular UI element (native or component) will have effect.
+
+**Never** try to modify any parts of settings dictionary - it's
+contents should be kept static!
+### Dynamic properties
+Because `properFinal()` is instance method, it can change any settings. So
+instead of common pattern of `:element-property="someReactiveProperty"`
+you may just assign it programmatically thus probably getting rid of some
+computed property. Both options have their _pros_ and _cons_.
+### Components wrapping
+If parent component had some attributes set it did not recognize, these
+will be available via [Vue.js $attrs](https://vuejs.org/v2/api/#vm-attrs)
+instance property. Injected `proper()` instance method will check out and
+apply those, overriding settings from static dictionary.
+### Lifecycles
+This is how Vue.js works - not part of this package, but still good know. ;)
+
 1. Component initalization
    * `beforeMount` hook
-   * `v-bind` directives of all elements
-   * `v-model` directives of all elements
+   * `v-bind` directives on all elements
+   * `v-model` directives on all elements
    * `bind` of user-defined directives
    * `inserted` of user-defined directives
    * possible auto-focus
    * `mounted` hook
 1. Component update
-   * `v-bind` directives of all elements
+   * `v-bind` directives on all elements
    * `inserted` of user-defined directives on all elements
 
-## API
-//  In boot module - namespace defaults to 'proper'
-//  vueProper instance will be namespaced after this
-Vue.mixin(require('vue-proper')(settingsObject, namespace))
-
-
-//  Individually
-import vueProper from 'vue-proper'
-
-//  In specific cases ... this will not change `vueProper` name spacing
-  mixins: [require('vue-proper')(myNamespace)]
-
-Great news is: props values can ve also set via parent element v-bind!
+See [Vue.js custom directives](https://vuejs.org/v2/guide/custom-directive.html)

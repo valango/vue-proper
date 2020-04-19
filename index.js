@@ -88,11 +88,11 @@ exports.namespaced = (namespace) => {
     created () {
       if (typeof this[properFn] !== 'function') return  //  Not using API.
 
-      const name = componentName(this), prefix = name ? name + '.' : ''
+      const compName = componentName(this)
 
       if (this[properFn]('') === undefined) {           //  It is a stub.
         this[properFn] = function (field = '') {
-          const k = this[keyFn](field)
+          const k = this[keyFn](field, compName)
           const r = exports.retrieve(k)
 
           assign(r, this.$attrs)
@@ -105,7 +105,7 @@ exports.namespaced = (namespace) => {
       }
 
       if (!this.hasOwnProperty(keyFn)) {
-        this[keyFn] = (r = '') => prefix + r
+        this[keyFn] = (el = '', comp) => (comp || compName) +'.'+ r
       }
 
       if (!this.hasOwnProperty(dynamicFn)) {
