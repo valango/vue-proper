@@ -6,6 +6,7 @@ const defaults = require('lodash.defaults')
 const camelCase = require('lodash.camelcase')
 const upperFirst = require('lodash.upperfirst')
 
+const assign = Object.assign
 const cap = (s) => upperFirst(camelCase(s))
 
 /**
@@ -93,8 +94,12 @@ exports.namespaced = (namespace) => {
         this[properFn] = function (field = '') {
           const k = this[keyFn](field)
           const r = exports.retrieve(k)
-          field ? defaults(r, this.$attrs) : Object.assign(r, this.$attrs)
-          // if (field === 'projectile') console.debug('RETRIEVE %s', k, r)
+
+          assign(r, this.$attrs)
+          if (field) {
+            r.ref = field
+            if (!r.name) r.name = field
+          }
           return this[dynamicFn](r, field)
         }
       }

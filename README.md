@@ -25,8 +25,7 @@ Vue.mixin(require('vue-proper')(defaults))
 Now, in `some-component.vue`:
 ```html
 <template>
-      <some-element v-bind="proper('name')" v-model="name">
-      </some-element>
+      <some-element v-bind="proper('name')" v-model="name" />
 </template>
 ```
 ```javascript
