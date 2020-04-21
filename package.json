@@ -12,6 +12,8 @@
   "author": "Villem Alango",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.2.0",
+    "codecov": "^3.6.5",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
@@ -19,6 +21,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "lodash": "^4.17.15",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
     "rimraf": "^3.0.2"
   },
   "dependencies": {
@@ -27,13 +31,27 @@
     "lodash.foreach": "^4.5.0",
     "lodash.upperfirst": "^4.3.1"
   },
+  "nyc": {
+    "all": true,
+    "check-coverage": true,
+    "exclude": [],
+    "include": [
+      "src/**/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text-summary"
+    ],
+    "report-dir": "./reports"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/valango/vue-proper.git"
   },
   "scripts": {
+    "clean": "rimraf reports",
     "purge": "rimraf node_modules reports",
     "lint": "eslint --ext .js src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc mocha 'test/**/*spec.js'"
   }
 }
