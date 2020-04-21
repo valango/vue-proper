@@ -2,6 +2,8 @@
 
 Maintain Vue.js component static props thru central repository.
 
+**NB:** This package is not yet properly tested and may be changed a lot!
+
 ## Problem
 [Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
 provide super powerful APIs to control component appearance and behavior.
@@ -104,7 +106,7 @@ in component's html template.
 ### Package exports
 **`mixin`**`(settings : Object=, namespace : string=) : Object  `
 Factory returning mixin definition object. If settings are not provided at
-the first call, then exception will be thrown.
+the first call, then exception will be thrown (not correct!).
 Namespace defaults to 'proper' and
 it affects the names of instance methods. Once the settings objects is provided,
 it will be used in following calls.
