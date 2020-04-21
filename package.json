@@ -1,15 +1,15 @@
 {
   "name": "vue-proper",
   "version": "0.8.0",
-  "description": "Maintain Vue.js component static props thru central repository.",
-  "main": "index.js",
+  "description": "Maintain Vue.js component static props thru central dictionary.",
+  "main": "src/index.js",
   "keywords": [
     "vue.js",
     "component",
     "props",
     "defaults"
   ],
-  "author": "",
+  "author": "Villem Alango",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -23,15 +23,17 @@
   },
   "dependencies": {
     "lodash.camelcase": "^4.3.0",
-    "lodash.clone": "^4.5.0",
-    "lodash.defaults": "^4.2.0",
+    "lodash.clonedeep": "^4.5.0",
     "lodash.foreach": "^4.5.0",
-    "lodash.pick": "^4.4.0",
     "lodash.upperfirst": "^4.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/valango/vue-proper.git"
   },
   "scripts": {
     "purge": "rimraf node_modules reports",
-    "lint": "eslint --ext .js .",
+    "lint": "eslint --ext .js src",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
