@@ -19,7 +19,7 @@ exports = module.exports = (dictionary, namespace = undefined) => {
 
 exports.factory = factory
 exports.mixin = exports
-exports.retrieve = retrieve
+exports.retrieve = factory.retrieve = retrieve
 exports.set = set
 
 /*

@@ -13,7 +13,7 @@ const componentName = (vm) =>
 
 const factory = (namespace) => {
   const properFn = namespace || 'proper'
-  const dynamicFn = properFn + 'Add', keyFn = properFn + 'Key'
+  const dynamicFn = properFn + 'Final', keyFn = properFn + 'Key'
 
   // https://vuejs.org/v2/guide/mixins.html
   return {
@@ -22,8 +22,9 @@ const factory = (namespace) => {
 
       const compName = componentName(this)
 
+      /* istanbul ignore next */
       if (this[properFn]('') === undefined) {           //  It is a stub.
-        this[properFn] = function (field = '') {
+        this[properFn] = function (field = undefined) {
           const k = this[keyFn](field, compName)
           const r = exports.retrieve(k)
 
@@ -37,7 +38,7 @@ const factory = (namespace) => {
       }
 
       if (!this.hasOwnProperty(keyFn)) {
-        this[keyFn] = (el = '', comp) => (comp || compName) + '.' + el
+        this[keyFn] = (el = '', comp) => (comp || compName) + '>' + el + '!'
       }
 
       if (!this.hasOwnProperty(dynamicFn)) {
@@ -47,4 +48,4 @@ const factory = (namespace) => {
   }
 }
 
-module.exports = factory
+exports = module.exports = factory

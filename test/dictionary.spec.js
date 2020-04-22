@@ -18,14 +18,14 @@ const resSurF = _.assign({}, resSur, {color: 'red'})
 
 const defs0 = {}
 const defs1 = {
-  '/straightname[^.]*\\.me\\..*name@/': {
+  '/straightname[^>]*>me>.*name!/': {
     rounded: false,
-    '/me\\.surname@/': {
+    '/me>surname!/': {
       borderless: true,
       outlined: false
     }
   },
-  '/@failed/i': { color: 'red' }
+  '/!failed/i': { color: 'red' }
 }
 
 _.assign(defs1, data0)
@@ -58,13 +58,13 @@ describe(ME, () => {
     })
 
     it('should retrieve combined', () => {
-      expect(target.retrieve('a/b/c.d.e@failed')).to.eql(
+      expect(target.retrieve('a/b/c>d>e!failed')).to.eql(
         { color: 'red', outlined: true, rounded: true })
-      expect(target.retrieve('oh/so-straightname.me.name@')).to.eql(resName,
+      expect(target.retrieve('oh/so-straightname>me>name!')).to.eql(resName,
         'name')
-      expect(target.retrieve('oh/so-straightname.me.surname@')).to.eql(resSur,
+      expect(target.retrieve('oh/so-straightname>me>surname!')).to.eql(resSur,
         'surname')
-      expect(target.retrieve('oh/so-straightname.me.surname@failed'))
+      expect(target.retrieve('oh/so-straightname>me>surname!failed'))
         .to.eql(resSurF, 'surname failed')
     })
   })
