@@ -50,8 +50,9 @@
   },
   "scripts": {
     "clean": "rimraf reports",
-    "purge": "rimraf node_modules reports",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint --ext .js src",
+    "purge": "rimraf node_modules reports",
     "test": "nyc mocha 'test/**/*spec.js'"
   }
 }
