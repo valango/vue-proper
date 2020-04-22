@@ -47,6 +47,12 @@ describe(ME, () => {
     it('should do the stuff', () => {
       expect(vm.proper('field')).to.eql({ a: 'A', name: 'field', ref: 'field' })
       expect(vm.proper()).to.eql({ a: 'A' })
+      let retrievalKey
+      vm.properFinal = (r, f, key) => (retrievalKey = key) && r
+      vm.proper('field')
+      expect(retrievalKey).to.equal('MySelf>field!')
+      vm.proper()
+      expect(retrievalKey).to.equal('MySelf>!')
     })
   })
 })

@@ -1,8 +1,7 @@
 # vue-proper [![Build Status](https://travis-ci.org/valango/vue-proper.svg?branch=master)](https://travis-ci.org/valango/vue-proper) [![Code coverage](https://codecov.io/gh/valango/vue-proper/branch/master/graph/badge.svg)](https://codecov.io/gh/valango/vue-proper)
 
-Maintain Vue.js component static props thru central repository.
-
-**NB:** This package is not yet properly tested and may be changed a lot!
+Keep Vue.js element attribute definitions aside from your functional code -
+similarly as CSS keeps HTML styling stuff aside.
 
 ## Problem
 [Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
@@ -24,7 +23,7 @@ import defaults from '../ui-definitions'
 
 Vue.mixin(require('vue-proper')(defaults))
 ```
-Now, in `SomeComponent.vue`:
+Now, in `my-component.vue`:
 ```html
 <template>
       <some-element v-bind="proper('surname')" v-model="surname" />
@@ -66,7 +65,7 @@ On component creation, the do-nothing `proper()` method will be replaced with
 a real thing. Then, on every invocation `this.proper('surname')`
 the following sequence will take place:
    1. `this.properKey('surname')` is called, which by default results in
-    string `SomeComponent.name`, used as **_retrieval key_** on `ui-definitions` 
+    string `MyComponent.name`, used as **_retrieval key_** on `ui-definitions` 
     contents (see [Retrieval algorithm](#retrieval-algorithm)).
    1. With settings object retrieved, the `ref` property is set to `'surname'` 
    and if `name` property is still not set, it will be `'surname'`, too.
@@ -93,20 +92,23 @@ during element creation. Otherwise, it will be left as it is.
 **HINT:** If you want to wrap the native method in your own,
 use `v-bind="myMethod(...)"` in component template.
 
-**`properKey`**`( elementName : string=, componentName : string= ) : String  `
+**`properKey`**`( elementName : string, componentName : string ) : String  `
 Should generate proper retrieval key. You can use Vue router path, state variables
 or whatever you like. Default code injected will just concatenate component
-and element names using '.' as separator.
+and element name using '>' as separator and terminating with '!'. In our example,
+it will provide `'MyComponent>name!'` when called from default `proper()` method.
 
-**`properFinal`**`( settings : Object ) : Object  `
+By defining this method yourself, you can use router paths, state variables or
+whatever you like.
+
+**`properFinal`**`( settings : Object, elementName : string, retrievalKey : string ) : Object  `
 Finalizes the settings object. Default version does nothing. It is possible
 to set dynamic properties here instead of using things like `:error-message="eMsg"`
 in component's html template.
 
 ### Package exports
 **`mixin`**`(settings : Object=, namespace : string=) : Object  `
-Factory returning mixin definition object. If settings are not provided at
-the first call, then exception will be thrown (not correct!).
+Factory returning mixin definition object.
 Namespace defaults to 'proper' and
 it affects the names of instance methods. Once the settings objects is provided,
 it will be used in following calls.
@@ -120,6 +122,8 @@ components, too. This method is called internally on the first call to `mixin()`
 Retrieve the settings. Results are cached internally. Calling this method without
 arguments clears the cache.
 This method is called internally by `proper()` instance method.
+
+**NB:** exception is thrown, if dictionary is not initialized.
 
 ## Advanced topics
 Just for clarity: whatever properties are returned by `proper()`, only those

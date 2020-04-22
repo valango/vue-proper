@@ -22,7 +22,6 @@ const factory = (namespace) => {
 
       const compName = componentName(this)
 
-      /* istanbul ignore next */
       if (this[properFn]('') === undefined) {           //  It is a stub.
         this[properFn] = function (field = undefined) {
           const k = this[keyFn](field, compName)
@@ -33,12 +32,12 @@ const factory = (namespace) => {
             r.ref = field
             if (!r.name) r.name = field
           }
-          return this[dynamicFn](r, field)
+          return this[dynamicFn](r, field, k)
         }
       }
 
       if (!this.hasOwnProperty(keyFn)) {
-        this[keyFn] = (el = '', comp) => (comp || compName) + '>' + el + '!'
+        this[keyFn] = (el, comp) => comp + '>' + el + '!'
       }
 
       if (!this.hasOwnProperty(dynamicFn)) {
