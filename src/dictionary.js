@@ -55,7 +55,7 @@ const retrieve = (path) => {
     cache = {}
     return {}
   }
-  return cache[path] || (cache[path] = get(path))
+  return cache[path] || (cache[path] = get(dictionary, path))
 }
 
 module.exports = { build, get, retrieve, set }
