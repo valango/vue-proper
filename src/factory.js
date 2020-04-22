@@ -23,7 +23,7 @@ const factory = (namespace) => {
       const compName = componentName(this)
 
       if (this[properFn]('') === undefined) {           //  It is a stub.
-        this[properFn] = function (field = undefined) {
+        this[properFn] = function (field = '') {
           const k = this[keyFn](field, compName)
           const r = exports.retrieve(k)
 
