@@ -10,7 +10,7 @@ Even [QInput](https://quasar.dev/vue-components/input)
 control element has 15 style-related properties out of 47 total!
 
 _**vue-proper**_ makes it easy to manage this complexity, and more.
-For saving your time, try the [vue-proper-demo](https://github.com/valango/vue-proper-demo) first!
+To save your time, try the [vue-proper-demo](https://github.com/valango/vue-proper-demo) first!
 
 ## Usage
 ```
@@ -116,7 +116,24 @@ recognized by particular UI element (native or component) will have effect.
 contents should be kept static!
 
 ### Mixin instance settings
-This chapter will be added soon... sorry!
+There are several inner settings you may change:
+   * `compose (el : string, settings : object) : string   ` default 
+   implementation returns `<prefix> ":" <name> ">" <el> "!" <suffix>`
+   it is not recommended to override this.
+   * `debug (attributes : object, el : string, retrievalKey : string)   `
+   is called by just before returning the attributes from `proper()`.
+   * `enhance (attributes : object, el : string)   ` is ha hook enabling to
+   change some attributes from component code.
+   * `name : string   ` is set to component name on form creation, but can be changed.
+   * `prefix : string   ` nice place for `vue-router` path or alike.
+   * `suffix : string   ` nice place for status key.
+   
+All functions above can be instance property methods. To initially retrieve the
+inner settings, use `this.proper({})` or `this.proper(null)`. The first variant
+returns a clone of internal settings object; another returns the object itself.
+
+It's up to you, if you like manipulate the object directly or to play safe
+like `this.proper({suffix: 'dangerous'})`.
 
 ### Components wrapping
 If parent component had some attributes set it did not recognize, these

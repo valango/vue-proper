@@ -56,7 +56,7 @@ const factory = (namespace) => {
           res.ref = param
           if (!res.name) res.name = param
         }
-        const attrs = settings.enhance.call(this, res, param, key)
+        const attrs = settings.enhance.call(this, res, param)
         settings.debug.call(this, attrs, param, key)
 
         return attrs
