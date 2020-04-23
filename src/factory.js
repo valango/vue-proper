@@ -11,9 +11,7 @@ const assign = Object.assign
 const componentName = (vm) =>
   upperFirst(camelCase((vm.$options && vm.$options._componentTag) || '?'))
 
-const fKey = (el, o) => o.prefix + ':' + o.name + '>' + el + '!' + o.suffix
-const fEnd = (r) => r
-const noop = () => undefined
+const compose = (el, o) => o.prefix + ':' + o.name + '>' + el + '!' + o.suffix
 
 /**
  * Create namespaced mix-in definition.
@@ -33,12 +31,13 @@ const factory = (namespace) => {
       if (typeof this[ns] !== 'function') return //  Not using API.
 
       const settings = {
-        compose: fKey, debug: noop, enhance: fEnd, prefix: '', suffix: ''
+        compose, debug: undefined, enhance: undefined, prefix: '', suffix: ''
       }
 
       settings.name = componentName(this)
 
       this[ns] = function (param = '') {
+        let f
         //  Check if we are in settings mode.
         if (typeof param === 'object') {
           if (!param) return settings     //  null: Enable straight access
@@ -49,17 +48,16 @@ const factory = (namespace) => {
         }
         //  Here for attributes retrieval mode.
         const key = settings.compose.call(this, param, settings)
-        const res = exports.retrieve(key)
+        let res = assign(exports.retrieve(key), this.$attrs)
 
-        assign(res, this.$attrs)
         if (param) {
           res.ref = param
           if (!res.name) res.name = param
         }
-        const attrs = settings.enhance.call(this, res, param)
-        settings.debug.call(this, attrs, param, key)
+        if ((f = settings.enhance)) res = f.call(this, res, param)
+        if ((f = settings.debug)) f.call(this, res, param, key)
 
-        return attrs
+        return res
       }
     }
   }
