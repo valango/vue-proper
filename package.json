@@ -1,13 +1,17 @@
 {
   "name": "vue-proper",
   "version": "0.8.1",
-  "description": "Maintain Vue.js component static props thru central dictionary.",
+  "description": "Keep Vue.js html static props / attributes aside from component code",
   "main": "src/index.js",
   "keywords": [
-    "vue.js",
+    "attributes",
+    "defaults",
     "component",
+    "html",
+    "non-reactive",
     "props",
-    "defaults"
+    "template",
+    "vue.js"
   ],
   "author": "Villem Alango",
   "license": "ISC",
