@@ -7,7 +7,7 @@ const me = require('../package').name
 exports = module.exports = (dictionary, namespace = undefined) => {
   if (typeof dictionary === 'string') {
     if (namespace !== undefined) throw new Error(me + '.mixin: invalid call')
-    exports.vueProper = exports.factory(namespace)
+    exports.vueProper = exports.factory(dictionary)
   } else {
     set(dictionary)
     if (namespace) {
