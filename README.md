@@ -1,7 +1,7 @@
 # vue-proper [![Build Status](https://travis-ci.org/valango/vue-proper.svg?branch=master)](https://travis-ci.org/valango/vue-proper) [![Code coverage](https://codecov.io/gh/valango/vue-proper/branch/master/graph/badge.svg)](https://codecov.io/gh/valango/vue-proper)
 
-Keep Vue.js element attribute definitions aside from your functional code -
-similarly as CSS keeps HTML styling stuff aside.
+Keep [Vue.js](https://vuejs.org/) element attribute definitions aside from
+your functional code - similarly as CSS keeps aside HTML styling stuff.
 
 ## Problem
 [Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
@@ -9,19 +9,18 @@ provide super powerful APIs to control component appearance and behavior.
 Even [QInput](https://quasar.dev/vue-components/input)
 control element has 15 style-related properties out of 47 total!
 
-Would you like to keep boilerplate property definitions separate from your
-functional code - similarly as HTML styling is kept in CSS, SASS, SCSS, etc...?
-
-_**vue-proper**_ makes it easy to do this and more.
+_**vue-proper**_ makes it easy to manage this complexity.
 
 ## Usage
+```
+$ npm i -S vue-proper
+```
 
 Somewhere in application boot code:
 ```javascript
 import Vue from 'vue'
-import defaults from '../ui-definitions'
 
-Vue.mixin(require('vue-proper')(defaults))
+Vue.mixin(require('vue-proper')(require('./ui-settings')))
 ```
 Now, in `my-component.vue`:
 ```html
@@ -37,25 +36,21 @@ export default {
   }
 }
 ```
-The `ui-definitions.js` file:
+The `ui-settings.js` file:
 ```javascript
-export default {
-     // Common defaults
-     outlined: true,    //  Used by Quasar
-     useInput: true,    //  Will map to `use-input` property, if element has such.
-     // Some parts of UI use different styling.
-     ['/smooth/']: {
-       outlined: false, //  Quasar stuff - only one of `filled`, `outlined`,
-       rounded: true    //  `standout` and `borderless` can be true.
-     },
-     ['/\@failed$/']: {   //  Some state-related styling here.
+module.exports = { 
+    // Common defaults
+    rel: 'noopener',
+    target: '_blank',
+    // Components with name containing 'round' will have different styling.
+    ['/round[^!]*!/']: {
+        rounded: true    //  `standout` and `borderless` can be true.
+    },
+    ['/!failed$/']: {    //  Special styling for failed state.
        color: 'red'
-     }
+    }
 }
 ```
-Now, all elements in html template will have `outlined` and `use-input` properties
-set to _true_ if applicable, except in component `MySmoothInput.vue` where 
-`rounded` and `use-input` will be _true_ instead.
 
 ## How it works
 Every time an UI element is (re-)rendered, it's `v-bind=` method gets called.
@@ -64,47 +59,34 @@ This happens quite frequently - on content changes, focus changes, etc...
 On component creation, the do-nothing `proper()` method will be replaced with
 a real thing. Then, on every invocation `this.proper('surname')`
 the following sequence will take place:
-   1. `this.properKey('surname')` is called, which by default results in
-    string `MyComponent.name`, used as **_retrieval key_** on `ui-definitions` 
-    contents (see [Retrieval algorithm](#retrieval-algorithm)).
+   1. A **_retrieval key_** `':MyComponent>surname!'` is applied on 
+   `ui-definitions.js` contents 
+     (see [Retrieval algorithm](#retrieval-algorithm)).
    1. With settings object retrieved, the `ref` property is set to `'surname'` 
    and if `name` property is still not set, it will be `'surname'`, too.
-   1. `this.properAdd(settings)` is called, which just returns it's argument
-   unchanged by default.
    1. Settings objects is returned by `proper()` method and will be applied
    to UI element.
 
 ### Retrieval algorithm
    1. all properties with normal string keys are assigned to result object.
-   1. if property key is RegExpr definition and the _retrieval key_ matches,
+   1. if property key is `RegExpr` definition and the _retrieval key_ matches,
    it's contents will be recursively processed from step #1 on and the result
    be assigned to upper-level result object, overriding conflicting property values.
 
 ## API
 ### Component instance methods
-**`proper`**`( elementName : string= ) : Object  `
-If this instance method is not defined, then our component will not be
-supported by services described above and nothing will be injected to it's code.
+**`proper`**`( param : {string|object}= ) : Object  `
+This instance method will replace your original definition, which should be
+just an empty function - if it is missing, then vue-proper machinery will not
+work with this component.
 
-If the method returns undefined, then it will be replaced with default method
-during element creation. Otherwise, it will be left as it is.
+Usually this method is called with element name as argument and it will return
+proper attribute settings. With no name, everything works in the same way,
+just `ref` and `name` attributes will not be set.
 
-**HINT:** If you want to wrap the native method in your own,
-use `v-bind="myMethod(...)"` in component template.
-
-**`properKey`**`( elementName : string, componentName : string ) : String  `
-Should generate proper retrieval key. You can use Vue router path, state variables
-or whatever you like. Default code injected will just concatenate component
-and element name using '>' as separator and terminating with '!'. In our example,
-it will provide `'MyComponent>name!'` when called from default `proper()` method.
-
-By defining this method yourself, you can use router paths, state variables or
-whatever you like.
-
-**`properFinal`**`( settings : Object, elementName : string, retrievalKey : string ) : Object  `
-Finalizes the settings object. Default version does nothing. It is possible
-to set dynamic properties here instead of using things like `:error-message="eMsg"`
-in component's html template.
+When called with argument of object type from your code, this method lets
+you manipulate inner settings of the plugin instance - see 
+[inner settings](#mixin-instance-settings) below.
 
 ### Package exports
 **`mixin`**`(settings : Object=, namespace : string=) : Object  `
@@ -131,11 +113,10 @@ recognized by particular UI element (native or component) will have effect.
 
 **Never** try to modify any parts of settings dictionary - it's
 contents should be kept static!
-### Dynamic properties
-Because `properFinal()` is instance method, it can change any settings. So
-instead of common pattern of `:element-property="someReactiveProperty"`
-you may just assign it programmatically thus probably getting rid of some
-computed property. Both options have their _pros_ and _cons_.
+
+### Mixin instance settings
+This chapter will be added soon... sorry!
+
 ### Components wrapping
 If parent component had some attributes set it did not recognize, these
 will be available via [Vue.js $attrs](https://vuejs.org/v2/api/#vm-attrs)
