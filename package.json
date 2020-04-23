@@ -1,6 +1,6 @@
 {
   "name": "vue-proper",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Maintain Vue.js component static props thru central dictionary.",
   "main": "src/index.js",
   "keywords": [
