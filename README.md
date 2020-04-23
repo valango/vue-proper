@@ -1,7 +1,7 @@
 # vue-proper [![Build Status](https://travis-ci.org/valango/vue-proper.svg?branch=master)](https://travis-ci.org/valango/vue-proper) [![Code coverage](https://codecov.io/gh/valango/vue-proper/branch/master/graph/badge.svg)](https://codecov.io/gh/valango/vue-proper)
 
 Keep [Vue.js](https://vuejs.org/) element attribute definitions aside from
-your functional code - similarly as CSS keeps aside HTML styling stuff.
+your component code - similarly as CSS keeps aside HTML styling stuff.
 
 ## Problem
 [Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
@@ -72,7 +72,7 @@ the following sequence will take place:
    1. all properties with normal string keys are assigned to result object.
    1. if property key is `RegExpr` definition and the _retrieval key_ matches,
    it's contents will be recursively processed from step #1 on and the result
-   be assigned to upper-level result object, overriding conflicting property values.
+   be assigned to parent-level result object, overriding conflicting property values.
 
 ## API
 ### Component instance methods
