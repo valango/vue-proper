@@ -9,7 +9,8 @@ provide super powerful APIs to control component appearance and behavior.
 Even [QInput](https://quasar.dev/vue-components/input)
 control element has 15 style-related properties out of 47 total!
 
-_**vue-proper**_ makes it easy to manage this complexity.
+_**vue-proper**_ makes it easy to manage this complexity, and more.
+For saving your time, try the [vue-proper-demo](https://github.com/valango/vue-proper-demo) first!
 
 ## Usage
 ```
