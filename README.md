@@ -1,7 +1,7 @@
 # vue-proper [![Build Status](https://travis-ci.org/valango/vue-proper.svg?branch=master)](https://travis-ci.org/valango/vue-proper) [![Code coverage](https://codecov.io/gh/valango/vue-proper/branch/master/graph/badge.svg)](https://codecov.io/gh/valango/vue-proper)
 
 Keep [Vue.js](https://vuejs.org/) element attribute definitions aside from
-component code - like CSS keeps aside HTML styling stuff.
+component code - like _CSS_ keeps aside the _HTML_ styling stuff.
 
 ## Problem
 [Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
@@ -9,17 +9,18 @@ provide super powerful APIs to control component appearance and behavior.
 But using these features often makes your (HTML at the first place) code complex
 and hard to manage.
 
-_**vue-proper**_ makes it easy to manage this complexity, and more.
+_**vue-proper**_ makes it easy to control this complexity, and more.
 To save your time, try the [vue-proper-demo](https://github.com/valango/vue-proper-demo) first!
 
 This package also provides lightweight API for managing texts like UI element
-labels, hints, placeholders etc.
+labels, hints, placeholders etc., also with internationalization.
 
 ## Usage
 ```
 $ npm i -S vue-proper
 ```
 
+### Example
 Somewhere in application boot code:
 ```javascript
 import Vue from 'vue'
@@ -109,8 +110,7 @@ components, too. This method is called internally on the first call to `mixin()`
 Retrieve the settings. Results are cached internally. Calling this method without
 arguments clears the cache.
 This method is called internally by `proper()` instance method.
-
-**NB:** exception is thrown, if dictionary is not initialized.
+<br>**NB:** exception is thrown, if dictionary is not initialized.
 
 **`texts`**`(field : string, context : string) : Object  `
 Returns a definition by `<context> "." <field>` or `<field>` just a field itself.
