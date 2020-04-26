@@ -5,13 +5,19 @@
   "main": "src/index.js",
   "keywords": [
     "attributes",
-    "defaults",
+    "element",
     "component",
+    "context aware",
     "html",
     "non-reactive",
+    "labels",
+    "properties",
     "props",
+    "status",
     "template",
-    "vue.js"
+    "texts",
+    "vue",
+    "vue-i18n"
   ],
   "author": "Villem Alango",
   "license": "ISC",
@@ -30,6 +36,7 @@
     "rimraf": "^3.0.2"
   },
   "dependencies": {
+    "lodash.assign": "^4.2.0",
     "lodash.camelcase": "^4.3.0",
     "lodash.clone": "^4.5.0",
     "lodash.clonedeep": "^4.5.0",

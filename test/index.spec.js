@@ -47,7 +47,8 @@ describe(ME, () => {
     })
 
     it('should do standard stuff', () => {
-      expect(vm.proper('field')).to.eql({ a: 'A', name: 'field', ref: 'field' })
+      expect(vm.proper('field')).to.eql(
+        { a: 'A', label: 'field', name: 'field', ref: 'field' })
       expect(vm.proper()).to.eql({ a: 'A' })
     })
   })

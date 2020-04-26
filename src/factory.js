@@ -2,11 +2,10 @@
 
 /* eslint  no-prototype-builtins: 0 */
 
+const assign = require('lodash.assign')
 const clone = require('lodash.clone')
 const camelCase = require('lodash.camelcase')
 const upperFirst = require('lodash.upperfirst')
-
-const assign = Object.assign
 
 const componentName = (vm) =>
   upperFirst(camelCase((vm.$options && vm.$options._componentTag) || '?'))
@@ -37,18 +36,21 @@ const factory = (namespace) => {
       settings.name = componentName(this)
 
       this[ns] = function (param = '') {
-        let f
+        let f, res = {}
         //  Check if we are in settings mode.
         if (typeof param === 'object') {
           if (!param) return settings     //  null: Enable straight access
 
-          const old = clone(settings)       //  enable clean access
+          res = clone(settings)       //  enable clean access
           assign(settings, param)
-          return old
+          return res
         }
         //  Here for attributes retrieval mode.
+        if (param) {
+          res = exports.texts(param, settings.name)
+        }
         const key = settings.compose.call(this, param, settings)
-        let res = assign(exports.retrieve(key), this.$attrs)
+        assign(res, exports.retrieve(key), this.$attrs)
 
         if (param) {
           res.ref = param

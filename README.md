@@ -1,16 +1,19 @@
 # vue-proper [![Build Status](https://travis-ci.org/valango/vue-proper.svg?branch=master)](https://travis-ci.org/valango/vue-proper) [![Code coverage](https://codecov.io/gh/valango/vue-proper/branch/master/graph/badge.svg)](https://codecov.io/gh/valango/vue-proper)
 
 Keep [Vue.js](https://vuejs.org/) element attribute definitions aside from
-your component code - similarly as CSS keeps aside HTML styling stuff.
+component code - like CSS keeps aside HTML styling stuff.
 
 ## Problem
 [Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
 provide super powerful APIs to control component appearance and behavior.
-Even [QInput](https://quasar.dev/vue-components/input)
-control element has 15 style-related properties out of 47 total!
+But using these features often makes your (HTML at the first place) code complex
+and hard to manage.
 
 _**vue-proper**_ makes it easy to manage this complexity, and more.
 To save your time, try the [vue-proper-demo](https://github.com/valango/vue-proper-demo) first!
+
+This package also provides lightweight API for managing texts like UI element
+labels, hints, placeholders etc.
 
 ## Usage
 ```
@@ -76,21 +79,22 @@ the following sequence will take place:
 
 ## API
 ### Component instance methods
-**`proper`**`( param : {string|object}= ) : Object  `
+**`proper`**`( param= : {string|object} ) : Object  `
 This instance method will replace your original definition, which should be
 just an empty function - if it is missing, then vue-proper machinery will not
 work with this component.
 
 Usually this method is called with element name as argument and it will return
-proper attribute settings. With no name, everything works in the same way,
-just `ref` and `name` attributes will not be set.
+proper attribute settings for that element.
+If name is not given, the attributes retrieval is still performed,
+but `ref` and `name` attributes as well as texts will not be set.
 
 When called with argument of object type from your code, this method lets
 you manipulate inner settings of the plugin instance - see 
 [inner settings](#mixin-instance-settings) below.
 
 ### Package exports
-**`mixin`**`(settings : Object=, namespace : string=) : Object  `
+**`mixin`**`(settings= : Object, namespace= : string) : Object  `
 Factory returning mixin definition object.
 Namespace defaults to 'proper' and
 it affects the names of instance methods. Once the settings objects is provided,
@@ -101,12 +105,25 @@ This method is also default export.
 Assign new settings and return the previous object. Effects already initiated
 components, too. This method is called internally on the first call to `mixin()`.
 
-**`retrieve`**`(key : string=) : Object  `
+**`retrieve`**`(key= : string) : Object  `
 Retrieve the settings. Results are cached internally. Calling this method without
 arguments clears the cache.
 This method is called internally by `proper()` instance method.
 
 **NB:** exception is thrown, if dictionary is not initialized.
+
+**`texts`**`(field : string, context : string) : Object  `
+Returns a definition by `<context> "." <field>` or `<field>` just a field itself.
+If definition found is an object, then it will be returned unchanged. String value
+will be casted to object `{ label: <string-value> }`.
+This method is used internally by `proper()` instance method. 
+
+**`texts.get`**`() : Object  `
+Returns an internal dictionary inatnce. Mutating it's contents will have immediate effect.
+
+**`texts.get`**`( settings : Object ) : Object  `
+Sets an internal dictionary object. Returns internal dictionary instance set.
+Mutating that instance has no effect on original `settings` object.
 
 ## Advanced topics
 Just for clarity: whatever properties are returned by `proper()`, only those
@@ -117,16 +134,16 @@ contents should be kept static!
 
 ### Mixin instance settings
 There are several inner settings you may change:
-   * `compose (el : string, settings : object) : string   ` default 
+   * **`compose`**`(el : string, settings : object) : string   ` default 
    implementation returns `<prefix> ":" <name> ">" <el> "!" <suffix>`
    it is not recommended to override this.
-   * `debug (attributes : object, el : string, retrievalKey : string)   `
+   * **`debug`**`(attributes : object, el : string, retrievalKey : string)   `
    is called by just before returning the attributes from `proper()`.
-   * `enhance (attributes : object, el : string)   ` is ha hook enabling to
+   * **`enhance`**`(attributes : object, el : string)   ` is ha hook enabling to
    change some attributes from component code.
-   * `name : string   ` is set to component name on form creation, but can be changed.
-   * `prefix : string   ` nice place for `vue-router` path or alike.
-   * `suffix : string   ` nice place for status key.
+   * **`name`**`: string   ` is set to component name on form creation, but can be changed.
+   * **`prefix`**`: string   ` nice place for `vue-router` path or alike.
+   * **`suffix`**`: string   ` nice place for status key.
    
 All functions above can be instance property methods. To initially retrieve the
 inner settings, use `this.proper({})` or `this.proper(null)`. The first variant
@@ -140,8 +157,18 @@ If parent component had some attributes set it did not recognize, these
 will be available via [Vue.js $attrs](https://vuejs.org/v2/api/#vm-attrs)
 instance property. Injected `proper()` instance method will check out and
 apply those, overriding settings from static dictionary.
-### Lifecycles
-This is how Vue.js works - not part of this package, but still good know. ;)
+
+### Internationalization
+There may be several ways to use [vue-i18n](https://github.com/kazupon/vue-i18n)
+or similar packages:
+   * translate the static contents of text dictionary once the language selection is made;
+   * use traditional $t(field) syntax in html template;
+   * call translation API from enhance() hook.
+
+The first option is probably the best.
+
+### UI element lifecycles
+This is how Vue.js works - not part of this package, but still good to know. ;)
 
 1. Component initalization
    * `beforeMount` hook

@@ -2,6 +2,7 @@
 
 const factory = require('./factory')
 const { retrieve, set } = require('./dictionary')
+const texts = require('./texts')
 const me = require('../package').name
 
 exports = module.exports = (dictionary, namespace = undefined) => {
@@ -20,6 +21,7 @@ exports = module.exports = (dictionary, namespace = undefined) => {
 exports.factory = factory
 exports.mixin = exports
 exports.retrieve = factory.retrieve = retrieve
+exports.texts = factory.texts = texts
 exports.set = set
 
 /*
