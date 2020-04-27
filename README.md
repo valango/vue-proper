@@ -82,17 +82,20 @@ the following sequence will take place:
 ### Component instance methods
 **`proper`**`( param= : {string|object} ) : Object  `
 This instance method will replace your original definition, which should be
-just an empty function - if it is missing, then vue-proper machinery will not
-work with this component.
-
-Usually this method is called with element name as argument and it will return
-proper attribute settings for that element.
-If name is not given, the attributes retrieval is still performed,
-but `ref` and `name` attributes as well as texts will not be set.
-
-When called with argument of object type from your code, this method lets
-you manipulate inner settings of the plugin instance - see 
-[inner settings](#mixin-instance-settings) below.
+just an empty function - if it is missing, then component can't use `vue-proper`
+services. Injected instance method can be called with:
+   * **UI element name**:<br />
+   _retrieved_ settings, texts, `{ ref: param, name: param }` and `this.$attrs` 
+   will be assigned to returned object in this order.
+   * **no arguments**:<br />
+   only no-element-specific attributes and contents of `$attrs` are returned.
+   This is useful in child components.
+   * **object instance**<br />
+   [inner settings](#mixin-instance-settings) are overridden by matching properties
+   of object instance and clone of original settings object is returned.
+   * **null**<br />
+   direct reference to [inner settings](#mixin-instance-settings) is
+   returned, so it may be manipulated directly.
 
 ### Package exports
 **`mixin`**`(settings= : Object, namespace= : string) : Object  `
@@ -112,16 +115,18 @@ arguments clears the cache.
 This method is called internally by `proper()` instance method.
 <br>**NB:** exception is thrown, if dictionary is not initialized.
 
-**`texts`**`(field : string, context : string) : Object  `
+**`texts`**`(field : string, context : string, exact= : boolean) : Object  `
 Returns a definition by `<context> "." <field>` or `<field>` just a field itself.
 If definition found is an object, then it will be returned unchanged. String value
 will be casted to object `{ label: <string-value> }`.
-This method is used internally by `proper()` instance method. 
+This method is used internally, too by `proper()` instance method.
+When called explicitly with _`exact`_ set, then empty object is returned, if
+no entry was found in dictionary.
 
 **`texts.get`**`() : Object  `
 Returns an internal dictionary inatnce. Mutating it's contents will have immediate effect.
 
-**`texts.get`**`( settings : Object ) : Object  `
+**`texts.set`**`( settings : Object ) : Object  `
 Sets an internal dictionary object. Returns internal dictionary instance set.
 Mutating that instance has no effect on original `settings` object.
 
@@ -145,13 +150,6 @@ There are several inner settings you may change:
    * **`prefix`**`: string   ` nice place for `vue-router` path or alike.
    * **`suffix`**`: string   ` nice place for status key.
    
-All functions above can be instance property methods. To initially retrieve the
-inner settings, use `this.proper({})` or `this.proper(null)`. The first variant
-returns a clone of internal settings object; another returns the object itself.
-
-It's up to you, if you like manipulate the object directly or to play safe
-like `this.proper({suffix: 'dangerous'})`.
-
 ### Components wrapping
 If parent component had some attributes set it did not recognize, these
 will be available via [Vue.js $attrs](https://vuejs.org/v2/api/#vm-attrs)

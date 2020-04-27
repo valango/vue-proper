@@ -46,16 +46,16 @@ const factory = (namespace) => {
           return res
         }
         //  Here for attributes retrieval mode.
-        if (param) {
-          res = exports.texts(param, settings.name)
-        }
         const key = settings.compose.call(this, param, settings)
-        assign(res, exports.retrieve(key), this.$attrs)
+
+        assign(res, exports.retrieve(key))
 
         if (param) {
-          res.ref = param
-          if (!res.name) res.name = param
+          assign(res, exports.texts(param, settings.name))
+          assign(res, { ref: param, name: param })
         }
+        assign(res, this.$attrs)
+
         if ((f = settings.enhance)) res = f.call(this, res, param)
         if ((f = settings.debug)) f.call(this, res, param, key)
 
