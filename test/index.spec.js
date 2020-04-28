@@ -6,9 +6,10 @@ const { expect } = require('chai')
 const _ = require('lodash')
 const target = require('../src/' + ME)
 
-const FIELDS = 'compose debug enhance name prefix suffix'.split(' ')
+const FIELDS = 'compose name prefix suffix'.split(' ')
 
 const VM = { $options: { _componentTag: 'my-self' } }
+const DICT = { a: 'A', '/custom/': { a: 'CA' } }
 
 describe(ME, () => {
   it('should fail on bad invocation', () => {
@@ -31,16 +32,16 @@ describe(ME, () => {
     let vm
 
     it('should ignore', () => {
-      vm = _.assign({ proper: true }, VM, target({ a: 'A' }))
+      vm = _.assign({ proper: true }, VM, target(DICT))
       vm.created()
       expect(() => vm.proper()).to.throw(Error, 'vm.proper is not a function')
-      vm = _.assign({}, VM, target({ a: 'A' }))
+      vm = _.assign({}, VM, target(DICT))
       vm.created()
       expect(() => vm.proper()).to.throw(Error, 'vm.proper is not a function')
     })
 
     it('should bind helpers', () => {
-      vm = _.assign({ proper: () => undefined }, VM, target({ a: 'A' }))
+      vm = _.assign({ proper: () => undefined }, VM, target(DICT))
       vm.created()
       expect(Object.keys(vm.proper(null)).sort()).to.eql(FIELDS)
       expect(Object.keys(vm.proper({})).sort()).to.eql(FIELDS)
@@ -50,6 +51,16 @@ describe(ME, () => {
       expect(vm.proper('field')).to.eql(
         { a: 'A', label: 'field', name: 'field', ref: 'field' })
       expect(vm.proper()).to.eql({ a: 'A' })
+    })
+
+    it('should use properName() method', () => {
+      vm = _.assign({ properName: () => 'custom' }, VM)
+      _.assign(vm, { proper: () => undefined }, target(DICT))
+      vm.created()
+      expect(vm.proper(null).name).to.equal(undefined)
+      expect(vm.proper('field')).to.eql(
+        { a: 'CA', label: 'field', name: 'field', ref: 'field' })
+      expect(vm.proper()).to.eql({ a: 'CA' })
     })
   })
 })

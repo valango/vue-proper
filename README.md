@@ -97,6 +97,20 @@ services. Injected instance method can be called with:
    direct reference to [inner settings](#mixin-instance-settings) is
    returned, so it may be manipulated directly.
 
+**`properName`**`() : string  `
+If this property method is defined, then it will be called from
+`this.proper(elementName)` and returned value is used instead of `name`
+internal setting. Example:
+```javascript
+
+  methods: { 
+    proper: () => undefined, 
+    properName () {
+      return this.$router.currentRoute.path
+    }
+  }
+```
+
 ### Package exports
 **`mixin`**`(settings= : Object, namespace= : string) : Object  `
 Factory returning mixin definition object.

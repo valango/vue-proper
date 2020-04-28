@@ -3,14 +3,14 @@
 /* eslint  no-prototype-builtins: 0 */
 
 const assign = require('lodash.assign')
-const clone = require('lodash.clone')
+const clone = require('lodash.clonedeep')
 const camelCase = require('lodash.camelcase')
 const upperFirst = require('lodash.upperfirst')
 
 const componentName = (vm) =>
   upperFirst(camelCase((vm.$options && vm.$options._componentTag) || '?'))
 
-const compose = (el, o) => o.prefix + ':' + o.name + '>' + el + '!' + o.suffix
+const compose1 = (el, o) => o.prefix + ':' + o.name + '>' + el + '!' + o.suffix
 
 /**
  * Create namespaced mix-in definition.
@@ -18,7 +18,11 @@ const compose = (el, o) => o.prefix + ':' + o.name + '>' + el + '!' + o.suffix
  * @returns {{created(): (undefined)}}
  */
 const factory = (namespace) => {
-  const ns = namespace || 'proper'
+  const ns = namespace || 'proper', nameFn = ns + 'Name'
+
+  const compose2 = function (el, o) {
+    return o.prefix + ':' + this[nameFn]() + '>' + el + '!' + o.suffix
+  }
 
   // https://vuejs.org/v2/guide/mixins.html
   return {
@@ -29,11 +33,14 @@ const factory = (namespace) => {
     created () {
       if (typeof this[ns] !== 'function') return //  Not using API.
 
-      const settings = {
-        compose, debug: undefined, enhance: undefined, prefix: '', suffix: ''
-      }
+      const settings = { prefix: '', suffix: '' }
 
-      settings.name = componentName(this)
+      if (typeof this[nameFn] !== 'function') {
+        settings.compose = compose1
+        settings.name = componentName(this)
+      } else {
+        settings.compose = compose2
+      }
 
       this[ns] = function (param = '') {
         let f, res = {}
