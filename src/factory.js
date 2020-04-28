@@ -64,6 +64,13 @@ const factory = (namespace) => {
         assign(res, this.$attrs)
 
         if ((f = settings.enhance)) res = f.call(this, res, param)
+        //  istanbul ignore next
+        if (param && res.innerText) {
+          if ((f = this.$refs[param])) {
+            f.innerText = res.innerText
+            delete res.innerText
+          }
+        }
         if ((f = settings.debug)) f.call(this, res, param, key)
 
         return res
