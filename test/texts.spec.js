@@ -19,6 +19,9 @@ describe('texts', () => {
     expect(target('b', 'c1')).to.eql({ hint: 'BH', place: 'B' })
     expect(target('x')).to.eql({ label: 'x' })
     expect(target('x', '', true)).to.eql({})
+    expect(target('a', 'strange', false)).to.equal('A')
+    expect(target('b', 'strange', false)).to.equal('b')
+    expect(target('x', 'strange', false)).to.equal('x')
   })
 
   it('should fail with bad dictionary assignment', () => {

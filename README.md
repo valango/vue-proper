@@ -132,13 +132,14 @@ arguments clears the cache.
 This method is called internally by `proper()` instance method.
 <br>**NB:** exception is thrown, if dictionary is not initialized.
 
-**`texts`**`(field : string, context : string, exact= : boolean) : Object  `
+**`texts`**`(field : string, context : string, mode= : *) : Object  `
 Returns a definition by `<context> "." <field>` or `<field>` just a field itself.
 If definition found is an object, then it will be returned unchanged. String value
 will be casted to object `{ label: <string-value> }`.
-This method is used internally, too by `proper()` instance method.
-When called explicitly with _`exact`_ set, then empty object is returned, if
-no entry was found in dictionary.
+This method is used internally, too by `proper()` instance method.<br />
+When called with truish _`mode`_, then empty object is returned, if
+no entry was found in dictionary.<br />
+When called with _`mode`_ set to _false_, pure text string is returned.
 
 **`texts.get`**`() : Object  `
 Returns an internal dictionary instance. Mutating it's contents will have immediate effect.

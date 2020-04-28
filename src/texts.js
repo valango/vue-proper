@@ -29,15 +29,20 @@ const set = (d) => {
  * Retrieve a text label for a field in current context.
  * @param {string} field   - UI element id.
  * @param {string} context - usually UI component name.
- * @param {*=} exact       - disable auto-generation.
+ * @param {*=} mode        - true: disable auto-generation,
+ *                           false: pure text string.
  * @returns {Object<{label:string}>} object with at least `label` field.
  */
-exports = module.exports = (field, context = '', exact = undefined) => {
+exports = module.exports = (field, context = '', mode = undefined) => {
   let v = dictionary[context + '.' + field] || dictionary[field]
 
   if (!v) {
-    if (exact) return {}
+    if (mode) return {}
     v = field
+  }
+
+  if (mode === false) {
+    return typeof v === 'string' ? v : (v.label || field)
   }
   return typeof v === 'string' ? { label: v } : v
 }
