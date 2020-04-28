@@ -122,6 +122,9 @@ This method is also default export.
 **`set`**`(settings : Object) : Object  `
 Assign new settings and return the previous object. Effects already initiated
 components, too. This method is called internally on the first call to `mixin()`.
+`settings` can be nested. All keys that are not acceptable attribute names,
+are treated as _RegExp_ definitions. Opening and closing slashes `'/'` are optional
+and can be used for setting _RegExp_ flags.
 
 **`retrieve`**`(key= : string) : Object  `
 Retrieve the settings. Results are cached internally. Calling this method without
@@ -138,10 +141,10 @@ When called explicitly with _`exact`_ set, then empty object is returned, if
 no entry was found in dictionary.
 
 **`texts.get`**`() : Object  `
-Returns an internal dictionary inatnce. Mutating it's contents will have immediate effect.
+Returns an internal dictionary instance. Mutating it's contents will have immediate effect.
 
 **`texts.set`**`( settings : Object ) : Object  `
-Sets an internal dictionary object. Returns internal dictionary instance set.
+Sets an internal dictionary object. Returns internal dictionary instance.
 Mutating that instance has no effect on original `settings` object.
 
 ## Advanced topics
