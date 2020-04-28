@@ -6,7 +6,10 @@ const { expect } = require('chai')
 const _ = require('lodash')
 const target = require('../src/' + ME)
 
-const data0 = { color: 'black', outlined: true, rounded: true }
+//  Retrieval key format:  prefix : context > name ! suffix
+//  Root level attributes.
+const dRoot = { attr1: 1, attr2: 2 }
+
 const resName = { color: 'black', outlined: true, rounded: false }
 const resSur = {
   borderless: true,
@@ -14,21 +17,25 @@ const resSur = {
   outlined: false,
   rounded: false
 }
-const resSurF = _.assign({}, resSur, {color: 'red'})
+const resSurF = _.assign({}, resSur, { color: 'red' })
+
+
+//  Attribute name:
+const rx = /^([a-z][\w-]*\w)$/i
+//  Any key not an attribute name is expected to be a RegExp definition.
+//  If key starts and ends with slash '/', then both will be stripped.
+
 
 const defs0 = {}
 const defs1 = {
-  '/straightname[^>]*>me>.*name!/': {
-    rounded: false,
-    '/me>surname!/': {
-      borderless: true,
-      outlined: false
-    }
+  '/fun/i': {
+    attr1: 'fun1',
+    '>a!': { attr1: 'fun1-a' }
   },
-  '/!failed/i': { color: 'red' }
+  '!bad$': { attr2: 'red', '>a!': { attr2: 'blue' } }
 }
 
-_.assign(defs1, data0)
+_.assign(defs1, dRoot)
 
 let res
 
@@ -38,34 +45,36 @@ describe(ME, () => {
   })
 
   describe('defs1', () => {
+    it('should fail with bad definition', () => {
+      expect(() => target.set([])).to.throw(TypeError, 'root level')
+      expect(() => target.set(42)).to.throw(TypeError, 'root level')
+      expect(() => target.set({ 'a/': 3 })).to.throw(Error, `by key 'a/'`)
+    })
+
     it('should set', () => {
-      expect(() => target.set([])).to.throw(TypeError)
-      expect(() => target.set(42)).to.throw(TypeError)
       expect(target.set(defs0)).to.equal(undefined)
       expect(target.set(defs1)).to.eql(defs0)
       expect(target.set(defs1)).to.not.equal(defs0)
     })
 
     it('should retrieve defaults', () => {
-      expect(res = target.retrieve('some')).to.eql(data0)
+      expect(res = target.retrieve('none')).to.eql(dRoot)
     })
 
     it('should cache', () => {
-      res.color = 'blue'                    //  Modifying cache is a bad idea!
-      expect(target.retrieve('some').color).to.eql('blue')
-      expect(target.retrieve()).to.eql({})  //  Resetting cache.
-      expect(target.retrieve('some').color).to.eql('black')
+      res.attr2 = 'x'   //  Modifying cache is a bad idea - here we just test!
+      expect(target.retrieve('none').attr2).to.equal('x')
+      expect(target.retrieve()).to.eql({})                //  Reset cache.
+      expect(target.retrieve('nome').attr2).to.equal(2)
     })
 
     it('should retrieve combined', () => {
-      expect(target.retrieve('a/b/c>d>e!failed')).to.eql(
-        { color: 'red', outlined: true, rounded: true })
-      expect(target.retrieve('oh/so-straightname>me>name!')).to.eql(resName,
-        'name')
-      expect(target.retrieve('oh/so-straightname>me>surname!')).to.eql(resSur,
-        'surname')
-      expect(target.retrieve('oh/so-straightname>me>surname!failed'))
-        .to.eql(resSurF, 'surname failed')
+      expect(target.retrieve('a/b/justfun>a!bad')).to.eql(
+        { attr1: 'fun1-a', attr2: 'blue' })
+      expect(target.retrieve('a/b/justfun>b!bad')).to.eql(
+        { attr1: 'fun1', attr2: 'red' })
+      expect(target.retrieve('a/b/justfun>a!good')).to.eql(
+        { attr1: 'fun1-a', attr2: 2 })
     })
   })
 })

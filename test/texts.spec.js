@@ -17,6 +17,8 @@ describe('texts', () => {
     d['c1.a'] = 'AA'
     expect(target('a', 'c1')).to.eql({ label: 'AA' })
     expect(target('b', 'c1')).to.eql({ hint: 'BH', place: 'B' })
+    expect(target('x')).to.eql({ label: 'x' })
+    expect(target('x', '', true)).to.eql({})
   })
 
   it('should fail with bad dictionary assignment', () => {

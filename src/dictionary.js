@@ -1,9 +1,13 @@
 'use strict'
+const assign = require('lodash.assign')
 const clone = require('lodash.clonedeep')
 const forEach = require('lodash.foreach')
 const $ = require('../package.json').name + ': '
 
-const assign = Object.assign
+const rxAttributeName = /^([a-z]([\w-]*\w)?)$/i
+const rxClassicRegExp = /^\/([^/]+)\/([a-z]*)$/
+
+const isValidDefinition = (d) => d && typeof d === 'object' && !Array.isArray(d)
 
 let cache
 let dictionary
@@ -28,24 +32,30 @@ const build = (settings) => {
   const data = {}, rules = [], trees = []
 
   forEach(settings, (v, key) => {
-    const r = /^\/([^/]+)\/([a-z]*)$/.exec(key)
-    if (r) {
-      rules.push(new RegExp(r[1], r[2]))
-      trees.push(build(v))
-    } else {
-      data[key] = v
+    if (rxAttributeName.test(key)) {
+      return (data[key] = v)
     }
+    //  Here we have some sort of regexp definition.
+    if (!isValidDefinition(v)) {
+      throw new Error($ + `illegal definition by key '${key}'`)
+    }
+
+    const r = rxClassicRegExp.exec(key)
+
+    rules.push(r ? new RegExp(r[1], r[2]) : new RegExp(key))
+    trees.push(build(v))
   })
   return { data, rules, trees }
 }
 
 const set = (settings) => {
-  if (typeof settings !== 'object' || Array.isArray(settings)) {
-    throw new TypeError($ + '\'settings\' must be object')
+  if (!isValidDefinition(settings)) {
+    throw new TypeError($ + 'illegal root level definition')
   }
-  const old = oldSettings
-  dictionary = build(oldSettings = clone(settings))
+  const old = oldSettings, fresh = clone(settings)
+  dictionary = build(fresh)
   cache = {}
+  oldSettings = fresh
   return old
 }
 

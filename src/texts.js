@@ -32,7 +32,7 @@ const set = (d) => {
  * @param {*=} exact       - disable auto-generation.
  * @returns {Object<{label:string}>} object with at least `label` field.
  */
-exports = module.exports = (field, context, exact = undefined) => {
+exports = module.exports = (field, context = '', exact = undefined) => {
   let v = dictionary[context + '.' + field] || dictionary[field]
 
   if (!v) {
