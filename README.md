@@ -16,7 +16,7 @@ and hard to manage.
 _**vue-proper**_ makes it easy to control this complexity, and more.
 To save your time, try the
 [vue-proper-demo](https://github.com/valango/vue-proper-demo) first!<br />
-**NOTE:** The 'dev' branch is the default, so you'll experience a glimpse of future.
+**NOTE:** The 'dev' branch is the default there, so you'll experience a glimpse of future.
 
 This package also provides lightweight API for managing texts like UI element
 labels, hints, placeholders etc., also with internationalization.
