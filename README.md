@@ -3,6 +3,10 @@
 Keep [Vue.js](https://vuejs.org/) element attribute definitions aside from
 component code - like _CSS_ keeps aside the _HTML_ styling stuff.
 
+**IMPORTANT:** v1.0.0 of this package will be published in the first week of May.
+It will feature new transparent internationalization, cleaner API and hopefully
+readable documentation. Stay tuned! :)
+
 ## Problem
 [Vue.js](https://vuejs.org/) and awesome [Quasar framework](https://quasar.dev/)
 provide super powerful APIs to control component appearance and behavior.
@@ -10,7 +14,9 @@ But using these features often makes your (HTML at the first place) code complex
 and hard to manage.
 
 _**vue-proper**_ makes it easy to control this complexity, and more.
-To save your time, try the [vue-proper-demo](https://github.com/valango/vue-proper-demo) first!
+To save your time, try the
+[vue-proper-demo](https://github.com/valango/vue-proper-demo) first!<br />
+**NOTE:** The 'dev' branch is the default, so you'll experience a glimpse of future.
 
 This package also provides lightweight API for managing texts like UI element
 labels, hints, placeholders etc., also with internationalization.
