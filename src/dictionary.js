@@ -2,7 +2,7 @@
 const assign = require('lodash.assign')
 const clone = require('lodash.clonedeep')
 const forEach = require('lodash.foreach')
-const $ = require('../package.json').name + ': '
+const $ = 'vue-proper: '
 
 const rxAttributeName = /^([a-z]([\w-]*\w)?)$/i
 const rxClassicRegExp = /^\/([^/]+)\/([a-z]*)$/

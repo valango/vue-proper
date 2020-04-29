@@ -18,7 +18,7 @@ const compose1 = (el, o) => o.prefix + ':' + o.name + '>' + el + '!' + o.suffix
  * @returns {{created(): (undefined)}}
  */
 const factory = (namespace) => {
-  const ns = namespace || 'proper', nameFn = ns + 'Name'
+  const ns = namespace || 'proper', nameFn = ns + 'Name', saveFn = ns + 'Save'
 
   const compose2 = function (el, o) {
     return o.prefix + ':' + this[nameFn]() + '>' + el + '!' + o.suffix
@@ -33,17 +33,14 @@ const factory = (namespace) => {
     created () {
       if (typeof this[ns] !== 'function') return //  Not using API.
 
-      const settings = { prefix: '', suffix: '' }
+      const settings = { name: componentName(this), prefix: '', suffix: '' }
+      const save = typeof this[saveFn] === 'function' && this[saveFn]
 
-      if (typeof this[nameFn] !== 'function') {
-        settings.compose = compose1
-        settings.name = componentName(this)
-      } else {
-        settings.compose = compose2
-      }
+      settings.compose = typeof this[nameFn] === 'function'
+        ? compose2 : compose1
 
       this[ns] = function (param = '') {
-        let f, res = {}
+        let f, res = {}, old, v
         //  Check if we are in settings mode.
         if (typeof param === 'object') {
           if (!param) return settings     //  null: Enable straight access
@@ -65,10 +62,14 @@ const factory = (namespace) => {
 
         if ((f = settings.enhance)) res = f.call(this, res, param)
         //  istanbul ignore next
-        if (param && res.innerText) {
+        if (param && (v = res.innerHtml)) {
           if ((f = this.$refs[param])) {
-            f.innerText = res.innerText
-            delete res.innerText
+            if ((old = f.innerHTML) !== v) {
+              if (!save || save.call(this, old, param, settings.name)) {
+                f.innerHTML = v
+              }
+            }
+            delete res.innerHtml
           }
         }
         if ((f = settings.debug)) f.call(this, res, param, key)

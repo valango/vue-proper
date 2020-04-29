@@ -57,7 +57,7 @@ describe(ME, () => {
       vm = _.assign({ properName: () => 'custom' }, VM)
       _.assign(vm, { proper: () => undefined }, target(DICT))
       vm.created()
-      expect(vm.proper(null).name).to.equal(undefined)
+      expect(vm.proper(null).name).to.equal('MySelf')
       expect(vm.proper('field')).to.eql(
         { a: 'CA', label: 'field', name: 'field', ref: 'field' })
       expect(vm.proper()).to.eql({ a: 'CA' })

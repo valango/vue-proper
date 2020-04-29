@@ -3,7 +3,7 @@
 const factory = require('./factory')
 const { retrieve, set } = require('./dictionary')
 const texts = require('./texts')
-const me = require('../package').name
+const me = 'vue-proper'
 
 exports = module.exports = (dictionary, namespace = undefined) => {
   if (typeof dictionary === 'string') {
